@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MonoPoly MVP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">🎲 MonoPoly <span class="badge">MVP</span></div>
+      <div class="status">
+        <span id="turn-indicator">الدور: -</span>
+        <span id="dice-indicator">النرد: -</span>
+        <button id="toggle-help" class="ghost">؟</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="left">
+        <div id="board" class="board"></div>
+      </section>
+
+      <section class="right">
+        <div id="setup" class="card">
+          <h2>إعداد اللعبة</h2>
+          <div class="row">
+            <label>عدد اللاعبين</label>
+            <select id="player-count">
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4" selected>4</option>
+            </select>
+          </div>
+
+          <div id="players-config" class="players-config"></div>
+
+          <button id="start-game" class="primary">ابدأ اللعبة</button>
+        </div>
+
+        <div id="controls" class="card hidden">
+          <h2>التحكم</h2>
+          <div class="controls-grid">
+            <button id="btn-roll" class="primary">🎲 رمي النرد</button>
+            <button id="btn-buy" class="success" disabled>🛒 شراء</button>
+            <button id="btn-skip" class="ghost" disabled>تخطي</button>
+            <button id="btn-end" class="warn" disabled>إنهاء الدور</button>
+            <button id="btn-build" class="secondary">🏠 مدير البناء</button>
+          </div>
+        </div>
+
+        <div id="build-panel" class="card hidden">
+          <h2>🏠 مدير البناء</h2>
+          <div id="build-list" class="build-list"></div>
+        </div>
+
+        <div id="help" class="card hidden">
+          <h2>مساعدة سريعة</h2>
+          <ul>
+            <li>اختر عدد اللاعبين وتعيينهم بشر/بوت ثم ابدأ.</li>
+            <li>اضغط <b>رمي النرد</b> واتبِع التعليمات.</li>
+            <li>يمكنك الشراء إذا كانت الخانة ملكية فارغة.</li>
+            <li>للبناء، يجب امتلاك المجموعة اللونية كاملة ثم استخدم <b>مدير البناء</b>.</li>
+          </ul>
+        </div>
+
+        <div id="log" class="card log"></div>
+      </section>
+    </main>
+
+    <footer class="footer">نسخة MVP محلية — بدون أصول محمية؛ جميع الأسماء عامة.</footer>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
