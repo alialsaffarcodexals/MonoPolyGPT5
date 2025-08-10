@@ -5,8 +5,8 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Install dependencies
-COPY package.json ./
-RUN npm install --only=production
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
 # Copy source
 COPY public ./public

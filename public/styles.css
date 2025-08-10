@@ -36,6 +36,12 @@ body{
 .left{display:flex;justify-content:center;align-items:center}
 .right{display:flex;flex-direction:column;gap:14px}
 
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;}
+  .left{order:2;}
+  .right{order:1;}
+}
+
 .card{background:linear-gradient(180deg, rgba(27,40,87,.82), rgba(15,22,45,.86));border:1px solid #26356b;border-radius:18px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .card h2{margin:6px 0 10px 0;font-size:18px}
 .row{display:flex;gap:10px;align-items:center;margin:6px 0}
@@ -47,10 +53,12 @@ body{
 
 .board{
   display:grid;
-  grid-template-columns: repeat(11, 52px);
-  grid-template-rows: repeat(11, 52px);
+  grid-template-columns: repeat(11,1fr);
+  grid-template-rows: repeat(11,1fr);
   gap:2px;
   background:#0e1531;padding:6px;border-radius:16px;border:1px solid #26356b;box-shadow: inset 0 0 0 2px #0e1531, 0 10px 40px rgba(0,0,0,.35);
+  width:min(90vw,572px);
+  height:min(90vw,572px);
 }
 .tile{
   background:linear-gradient(180deg, #0f1a3b, #0a1129);
@@ -91,3 +99,5 @@ body{
 .build-item .meta{color:#9fb2e2;font-size:12px}
 
 .select{background:#0f1736;border:1px solid #2b3b76;color:#d6e0ff;padding:8px;border-radius:10px;width:100%}
+
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
