@@ -16,7 +16,7 @@
       <div class="status">
         <span id="turn-indicator">الدور: -</span>
         <span id="dice-indicator">النرد: -</span>
-        <button id="toggle-help" class="ghost">؟</button>
+        <button id="toggle-help" class="ghost" aria-label="مساعدة">؟</button>
       </div>
     </header>
 
@@ -29,7 +29,7 @@
         <div id="setup" class="card">
           <h2>إعداد اللعبة</h2>
           <div class="row">
-            <label>عدد اللاعبين</label>
+            <label for="player-count">عدد اللاعبين</label>
             <select id="player-count">
               <option value="2">2</option>
               <option value="3">3</option>
@@ -39,17 +39,17 @@
 
           <div id="players-config" class="players-config"></div>
 
-          <button id="start-game" class="primary">ابدأ اللعبة</button>
+          <button id="start-game" class="primary" aria-label="ابدأ اللعبة">ابدأ اللعبة</button>
         </div>
 
         <div id="controls" class="card hidden">
           <h2>التحكم</h2>
           <div class="controls-grid">
-            <button id="btn-roll" class="primary">🎲 رمي النرد</button>
-            <button id="btn-buy" class="success" disabled>🛒 شراء</button>
-            <button id="btn-skip" class="ghost" disabled>تخطي</button>
-            <button id="btn-end" class="warn" disabled>إنهاء الدور</button>
-            <button id="btn-build" class="secondary">🏠 مدير البناء</button>
+            <button id="btn-roll" class="primary" aria-label="رمي النرد">🎲 رمي النرد</button>
+            <button id="btn-buy" class="success" disabled aria-label="شراء">🛒 شراء</button>
+            <button id="btn-skip" class="ghost" disabled aria-label="تخطي">تخطي</button>
+            <button id="btn-end" class="warn" disabled aria-label="إنهاء الدور">إنهاء الدور</button>
+            <button id="btn-build" class="secondary" aria-label="مدير البناء">🏠 مدير البناء</button>
           </div>
         </div>
 
@@ -58,7 +58,7 @@
           <div id="build-list" class="build-list"></div>
         </div>
 
-        <div id="help" class="card hidden">
+        <div id="help" class="card hidden" aria-live="polite">
           <h2>مساعدة سريعة</h2>
           <ul>
             <li>اختر عدد اللاعبين وتعيينهم بشر/بوت ثم ابدأ.</li>
@@ -68,7 +68,8 @@
           </ul>
         </div>
 
-        <div id="log" class="card log"></div>
+        <div id="players-info" class="card"></div>
+        <div id="log" class="card log" aria-live="polite"></div>
       </section>
     </main>
 

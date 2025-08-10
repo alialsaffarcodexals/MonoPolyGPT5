@@ -72,7 +72,8 @@ const COLOR_GROUPS = {
   RED: [21,23,24],
   YELLOW: [26,27,29],
   GREEN: [31,32,34],
-  DARK_BLUE: [39, 37] // note indices: last two props swapped order in array, ensure correct
+  // Dark blue properties are at indices 37 and 39 in BOARD
+  DARK_BLUE: [37,39]
 };
 
 const RAIL_INDICES = [5, 15, 25, 35];
@@ -253,40 +254,39 @@ function renderBoard(){
 }
 
 function indexToGridPositions(){
-  // Return mapping of 40 tiles to 11x11 grid cell indexes (0..120)
-  // Bottom row left->right: 0..10 (tiles 0..10)
-  // Right col bottom->top: 11..20 (tiles 11..20)
-  // Top row right->left: 21..31 (tiles 21..30)
-  // Left col top->bottom: 32..41 (tiles 31..39) (note 40th doesn't exist; 0 already used)
+  // Map board indices (0-39) onto an 11x11 grid. Starting at bottom-right
+  // (tile 0) and moving counter-clockwise.
   const arr = [];
-  const gridIndex = (r,c)=> r*11 + c;
+  const grid = (r,c)=> r*11 + c;
 
-  // bottom row
+  // bottom row: right -> left
   for(let c=10;c>=0;c--){
-    arr.push({tileIndex: 10 - c, gridIndex: gridIndex(10,c)});
+    arr.push({tileIndex: arr.length, gridIndex: grid(10,c)});
   }
-  // right col (excluding bottom and top corners)
-  for(let r=9;r>=1;r--){
-    arr.push({tileIndex: 10 + (10 - r), gridIndex: gridIndex(r,10)});
+  // left column: bottom -> top (excluding bottom corner already used)
+  for(let r=9;r>=0;r--){
+    arr.push({tileIndex: arr.length, gridIndex: grid(r,0)});
   }
-  // top row
-  for(let c=9;c>=0;c--){
-    arr.push({tileIndex: 20 + (9 - c), gridIndex: gridIndex(0,c)});
+  // top row: left -> right (excluding left corner already used)
+  for(let c=1;c<=10;c++){
+    arr.push({tileIndex: arr.length, gridIndex: grid(0,c)});
   }
-  // left col
+  // right column: top -> bottom (excluding top and bottom corners)
   for(let r=1;r<=9;r++){
-    arr.push({tileIndex: 30 + (r - 1), gridIndex: gridIndex(r,0)});
+    arr.push({tileIndex: arr.length, gridIndex: grid(r,10)});
   }
   return arr;
 }
 
 function renderSidebar(){
-  const log = $('#log');
-  const info = state.players.map(p=>{
-    const status = p.bankrupt ? '<span class="bankrupt">مفلس</span>' : `$${p.cash}`;
-    return `<div class="player-card"><div><b style="color:${p.color}">■</b> ${p.name}</div><div>${status}</div></div>`;
-  }).join('');
-  log.insertAdjacentHTML('afterbegin', `<div class="sidebar-group">${info}</div>`);
+  const infoWrap = $('#players-info');
+  if(infoWrap){
+    const info = state.players.map(p=>{
+      const status = p.bankrupt ? '<span class="bankrupt">مفلس</span>' : `$${p.cash}`;
+      return `<div class="player-card"><div><b style="color:${p.color}">■</b> ${p.name}</div><div>${status}</div></div>`;
+    }).join('');
+    infoWrap.innerHTML = `<div class="sidebar-group">${info}</div>`;
+  }
   // Controls state
   const cur = currentPlayer();
   $('#btn-roll').disabled = false;
@@ -351,13 +351,14 @@ function onRoll(){
         p.getOutCards--;
         p.inJail = false;
         p.jailTries = 0;
+        state.doublesCount = 0;
         logMsg(`🔑 ${p.name} استخدم بطاقة الخروج من السجن.`);
         // still no move this turn; allow roll again?
         enableEndOnly();
       }else if(p.jailTries>=3){
         // auto pay 50
         changeCash(p, -50);
-        p.inJail=false; p.jailTries=0;
+        p.inJail=false; p.jailTries=0; state.doublesCount = 0;
         logMsg(`💸 ${p.name} دفع 50$ للخروج بعد 3 محاولات. تحرك الآن.`);
       }else{
         logMsg(`🚫 ${p.name} فشل في الخروج (${d1}+${d2}). محاولات: ${p.jailTries}/3`);
@@ -395,7 +396,8 @@ function onRoll(){
 
 function movePlayer(p, steps, fromRoll=false){
   const before = p.pos;
-  p.pos = (p.pos + steps) % BOARD.length;
+  // ensure positive modulo for backward moves
+  p.pos = (p.pos + steps + BOARD.length) % BOARD.length;
   renderBoard();
   // Pass GO
   if(before > p.pos){
@@ -721,9 +723,11 @@ function drawCard(p, type){
 }
 
 function applyCard(p, card, type){
+  let end = true; // whether to enable end turn after action
   switch(card.t){
     case 'MOVE':
       moveTo(p, card.to, true);
+      end = false;
       break;
     case 'GOTOJAIL':
       sendToJail(p, 'بطاقة');
@@ -739,6 +743,7 @@ function applyCard(p, card, type){
           const rent = rentTable[owned]*2;
           takeRent(p, tile.owner, rent, tile.name + ' (ضعف)');
         }
+        end = false;
       }
       break;
     case 'NEAREST_UTIL':
@@ -753,10 +758,12 @@ function applyCard(p, card, type){
           const rent = diceSum * mult;
           takeRent(p, tile.owner, rent, tile.name);
         }
+        end = false;
       }
       break;
     case 'BACK3':
       movePlayer(p, -3, false);
+      end = false;
       break;
     case 'MONEY':
       changeCash(p, +card.amt);
@@ -768,7 +775,7 @@ function applyCard(p, card, type){
       p.getOutCards++;
       break;
   }
-  enableEndOnly();
+  if(end) enableEndOnly();
 }
 function moveTo(p, index, collectGo){
   const before = p.pos;
